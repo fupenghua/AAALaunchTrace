@@ -1,0 +1,6 @@
+use_frameworks!
+target 'AAALaunchTrace_Tests' do
+  pod 'AAALaunchTrace', :path => '../'
+  
+  
+end
