@@ -70,7 +70,7 @@ void static __attribute__((constructor)) before_main() {
     return sysctl(cmd, sizeof(cmd)/sizeof(*cmd), procInfo, &size, NULL, 0) == 0;
 }
 
-- (NSTimeInterval)processStartTime {
+- (UInt64)processStartTime {
     struct kinfo_proc kProcInfo;
     if ([self processInfoForPID:[[NSProcessInfo processInfo] processIdentifier] procInfo:&kProcInfo]) {
         return kProcInfo.kp_proc.p_un.__p_starttime.tv_sec * 1000.0 + kProcInfo.kp_proc.p_un.__p_starttime.tv_usec / 1000.0;
@@ -80,7 +80,7 @@ void static __attribute__((constructor)) before_main() {
     }
 }
 
-- (NSTimeInterval)currentTime {
+- (UInt64)currentTime {
     NSDate *date = [NSDate date];
     NSTimeInterval interval = [date timeIntervalSince1970];
     return interval * 1000;
@@ -89,20 +89,20 @@ void static __attribute__((constructor)) before_main() {
 #pragma mark ---  各阶段时间记录
 
 - (void)launchStart {
-    NSTimeInterval launchStart = [self processStartTime];
+    UInt64 launchStart = [self processStartTime];
     self.launchInfo[@"launchStart"] = @(launchStart);
 }
 
 /// 第一个+load方法执行
 + (void)firstLoad {
     [[self shared] launchStart];
-    NSTimeInterval firstLoad = [[self shared] currentTime];
+    UInt64 firstLoad = [[self shared] currentTime];
     [self shared].launchInfo[@"firstLoad"] = @(firstLoad);
 }
 
 /// app main函数开始执行
 - (void)mainStart {
-    NSTimeInterval mainStart = [self currentTime];
+    UInt64 mainStart = [self currentTime];
     self.launchInfo[@"mainStart"] = @(mainStart);
 }
 
@@ -113,7 +113,7 @@ void static __attribute__((constructor)) before_main() {
 
 /// finishLaunching完成
 - (void)didFinishLaunching {
-    NSTimeInterval finishLaunching = [self currentTime];
+    UInt64 finishLaunching = [self currentTime];
     self.launchInfo[@"didFinishLaunching"] = @(finishLaunching);
 }
 
@@ -121,7 +121,7 @@ void static __attribute__((constructor)) before_main() {
 + (void)launchEnd {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSTimeInterval launchEnd = [[self shared] currentTime];
+        UInt64 launchEnd = [[self shared] currentTime];
         [self shared].launchInfo[@"launchEnd"] = @(launchEnd);
     });
 }
