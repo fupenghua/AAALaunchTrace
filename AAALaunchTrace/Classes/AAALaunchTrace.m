@@ -95,9 +95,10 @@ void static __attribute__((constructor)) before_main() {
 
 /// 第一个+load方法执行
 + (void)firstLoad {
-    [[self shared] launchStart];
-    UInt64 firstLoad = [[self shared] currentTime];
-    [self shared].launchInfo[@"firstLoad"] = @(firstLoad);
+    AAALaunchTrace *shared = [AAALaunchTrace shared];
+    [shared launchStart];
+    UInt64 firstLoad = [shared currentTime];
+    shared.launchInfo[@"firstLoad"] = @(firstLoad);
 }
 
 /// app main函数开始执行
@@ -121,12 +122,13 @@ void static __attribute__((constructor)) before_main() {
 + (void)launchEnd {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        UInt64 launchEnd = [[self shared] currentTime];
-        [self shared].launchInfo[@"launchEnd"] = @(launchEnd);
+        AAALaunchTrace *shared = [AAALaunchTrace shared];
+        UInt64 launchEnd = [shared currentTime];
+        shared.launchInfo[@"launchEnd"] = @(launchEnd);
     });
 }
 
 + (NSDictionary *)launchTraceInfo {
-    return [self shared].launchInfo;
+    return [AAALaunchTrace shared].launchInfo;
 }
 @end

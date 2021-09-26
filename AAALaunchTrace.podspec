@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'AAALaunchTrace'
-  s.version          = '0.2.0'
+  s.version          = '0.3.0'
   s.summary          = '统计app启动时间'
 
 # This description is used to generate tags and improve search results.
